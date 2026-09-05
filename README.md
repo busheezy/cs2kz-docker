@@ -147,6 +147,10 @@ Follow the generated instructions to set the deployment directory to mode `0700`
 
 ## Operate the server
 
+Generated deployments include `console.sh`. Run `sh console.sh` from the deployment folder for an interactive game console with live logs. Type commands such as `status`, `meta list`, or `kz_reload_config`; command history is available with the arrow keys. Use `/exit`, Ctrl+C, or Ctrl+D to disconnect and leave the server running. The game command `quit` stops the game, and Compose may restart it.
+
+For existing deployments, run `sh /path/to/cs2kz-docker/scripts/console.sh` from the deployment folder. Rebuild and recreate older containers first with `docker compose up -d --build`. You can also open just the command prompt with `docker compose exec server cs2kz console` and view responses in a separate `docker compose logs -f server` terminal.
+
 ```sh
 docker compose exec server cs2kz status
 docker compose logs -f server

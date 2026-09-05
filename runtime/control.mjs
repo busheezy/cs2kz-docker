@@ -1,4 +1,5 @@
 import net from "node:net";
+import { createInterface } from "node:readline";
 import dgram from "node:dgram";
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
@@ -111,4 +112,43 @@ export async function control(action, command) {
       "127.0.0.1",
     );
   });
+}
+
+export async function interactiveConsole() {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    throw new Error("Use docker compose exec server cs2kz console from an interactive terminal");
+  }
+  const status = await control("status");
+  if (!status.running) {
+    throw new Error("Game is not running");
+  }
+  console.log(
+    "CS2 console. Enter game commands; /exit or Ctrl+C disconnects. quit stops the game.",
+  );
+  const input = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: "cs2> ",
+    historySize: 100,
+  });
+  input.on("SIGINT", () => input.close());
+  input.prompt();
+  try {
+    for await (const line of input) {
+      const command = line.trim();
+      if (command === "/exit") {
+        break;
+      }
+      if (command) {
+        try {
+          await control("command", command);
+        } catch (error) {
+          console.error(error.message);
+        }
+      }
+      input.prompt();
+    }
+  } finally {
+    input.close();
+  }
 }

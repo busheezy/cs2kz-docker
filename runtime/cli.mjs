@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { serve } from "./server.mjs";
-import { control, freeze, versions } from "./control.mjs";
+import { control, freeze, versions, interactiveConsole } from "./control.mjs";
 import { install } from "./install.mjs";
 import { pterodactyl } from "./pterodactyl.mjs";
 import { readSettings } from "./settings.mjs";
@@ -12,6 +12,8 @@ try {
   let result;
   if (action === "start") {
     await serve();
+  } else if (action === "console") {
+    await interactiveConsole();
   } else if (action === "install") {
     await install(readSettings());
   } else if (action === "pterodactyl") {
