@@ -2,10 +2,12 @@
 !Dockerfile
 !runtime/
 !runtime/**
-**/__pycache__/
-**/*.pyc
 !config/
 !config/settings.json
 !examples/
 !examples/config/
 !examples/config/server.cfg
+!package.json
+!package-lock.json
+!pterodactyl/
+!pterodactyl/egg-cs2kz.json

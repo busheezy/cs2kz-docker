@@ -21,13 +21,12 @@ docker build --target pterodactyl -t ghcr.io/YOUR_OWNER/cs2kz:pterodactyl .
 Replace `YOUR_OWNER` with your lowercase registry owner. Publish the Pterodactyl image to a registry your Wings node can pull from, then generate the import file with your real image reference and maintainer email:
 
 ```sh
-python3 manage.py egg \
+docker run --rm --entrypoint cs2kz ghcr.io/YOUR_OWNER/cs2kz:pterodactyl egg \
   --image ghcr.io/YOUR_OWNER/cs2kz:pterodactyl \
-  --author YOUR_EMAIL \
-  --output /tmp/egg-cs2kz.json
+  --author YOUR_EMAIL > /tmp/egg-cs2kz.json
 ```
 
-The generator sets both the runtime image and installation image references. It refuses to overwrite an existing output file. The checked-in `egg-cs2kz.json` is a template; generate your import file instead of importing the placeholder reference.
+The generator sets both the runtime image and installation image references. Choose a new output path; shell redirection replaces an existing file. The checked-in `egg-cs2kz.json` is a template; generate your import file instead of importing the placeholder reference.
 
 1. Import the generated JSON into a nest in Pterodactyl's administrator interface.
 2. Create a Linux x86-64 server using that egg and your published `pterodactyl` image.
@@ -79,7 +78,7 @@ The egg exposes optional startup overrides:
 
 Put a complete `cs2kz-server-config.txt` in `.cs2kz/config/` to use a persistent override. Obtain the initial file from `game/csgo/cfg/` after installation. `server.cfg`, `server-private.cfg`, and this optional override are copied into game configuration during startup and updates. With no override, edit the installed CS2KZ config directly and reload it through the console.
 
-Use the same freeze policy described in the main README: disable game updates, record the installed Steam build ID, pin component versions/checksums, and keep a backup of the working installation. Installed versions/checksums are recorded in `.cs2kz/state/*.json`; the Steam build ID is in `steamapps/appmanifest_730.acf`. Do not assume SteamCMD can recreate arbitrary historical builds. `manage.py` operates Compose deployments; it does not call the Pterodactyl API.
+Use the same freeze policy described in the main README: disable game updates, record the installed Steam build ID, pin component versions/checksums, and keep a backup of the working installation. Installed versions/checksums are recorded in `.cs2kz/state/*.json`; the Steam build ID is in `steamapps/appmanifest_730.acf`. Do not assume SteamCMD can recreate arbitrary historical builds. Use the panel for server management.
 
 ## Console, power, schedules, backups, and SFTP
 

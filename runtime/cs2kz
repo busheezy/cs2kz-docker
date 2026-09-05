@@ -1,0 +1,2 @@
+#!/bin/sh
+exec node /opt/cs2kz/cli.mjs "$@"

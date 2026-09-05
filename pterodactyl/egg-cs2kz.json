@@ -6,13 +6,13 @@
   "exported_at": "2026-09-05T00:00:00+00:00",
   "name": "CS2KZ \u00b7 Steam Runtime 3",
   "author": "replace-me@example.com",
-  "description": "CS2KZ on Sniper with optional companion plugins, pinning and persistent configuration. Generate this egg with manage.py egg before importing. Uses the pterodactyl target of the shared Dockerfile.",
+  "description": "CS2KZ on Sniper with optional companion plugins, pinning and persistent configuration. Generate this egg with cs2kz egg before importing. Uses the pterodactyl target of the shared Dockerfile.",
   "features": ["steam_disk_space"],
   "docker_images": {
     "CS2KZ Sniper": "ghcr.io/your-owner/cs2kz:pterodactyl"
   },
   "file_denylist": [],
-  "startup": "python3 /opt/cs2kz/server.py",
+  "startup": "cs2kz start",
   "config": {
     "files": "{}",
     "startup": "{\"done\": \"Connection to Steam servers successful\"}",
@@ -21,7 +21,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "set -eu\nexport HOME=/mnt/server\nexport SERVER_DIR=/mnt/server\nexport STATE_DIR=/mnt/server/.cs2kz/state\nexport CONFIG_DIR=/mnt/server/.cs2kz/config\nexport STEAMCMD_DIR=/mnt/server/.cs2kz/steamcmd\nexport PTERODACTYL=1\npython3 /opt/cs2kz/pterodactyl.py --install\n",
+      "script": "set -eu\nexport HOME=/mnt/server\nexport SERVER_DIR=/mnt/server\nexport STATE_DIR=/mnt/server/.cs2kz/state\nexport CONFIG_DIR=/mnt/server/.cs2kz/config\nexport STEAMCMD_DIR=/mnt/server/.cs2kz/steamcmd\nexport PTERODACTYL=1\ncs2kz pterodactyl --install\n",
       "container": "ghcr.io/your-owner/cs2kz:pterodactyl",
       "entrypoint": "bash"
     }
