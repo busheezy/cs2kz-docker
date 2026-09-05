@@ -1,6 +1,6 @@
 # CS2KZ Docker
 
-A standalone CS2KZ server project built on Valve's **Steam Runtime 3 / Sniper**. Generate a private Compose deployment, start it, and manage the server without publishing an administration API or RCON port.
+Run a complete CS2KZ server with **Docker Compose**, built on Valve's **Steam Runtime 3 / Sniper**. Standalone Docker is the primary setup: generate a deployment, start it, and manage installation, updates, configuration, console commands, backups, and optional SFTP with Docker.
 
 The image contains the runtime libraries, SteamCMD bootstrap, component installer, and process supervisor. On first start it downloads **CS2 (Steam app 730)**, **Metamod**, **CS2KZ**, and the selected optional companions into persistent Docker volumes. Game content is installed at runtime rather than baked into a large, quickly outdated image.
 
@@ -14,12 +14,6 @@ The image contains the runtime libraries, SteamCMD bootstrap, component installe
 | Configuration       | Editable host files, persistent plugin configs, optional host CS2KZ override        |
 | SFTP                | Optional separate OpenSSH container, key-only login, chroot, no shell or forwarding |
 | Persistence         | Separate game, updater state, SteamCMD, home, and optional SSH host-key volumes     |
-
-## Standalone or Pterodactyl
-
-The same game-server Dockerfile builds both environments. Its default `standalone` target preserves the Compose setup below; `docker build --target pterodactyl` builds the panel-compatible yolk with the `container` user, `/home/container` storage, and panel console input. The installer, optional components, and pinning are shared.
-
-See the [Pterodactyl guide](pterodactyl/README.md) for egg generation, installation, configuration, Wings SFTP, and extending the yolk.
 
 ## Browser generator
 
@@ -40,9 +34,9 @@ The workflow at `.github/workflows/pages.yaml` publishes only `docs/`, keeping d
 
 No website build step or hosting secrets are needed. The workflow also supports manual dispatch. Adjust its branch filter if the repository uses a different default branch. Local preview is simply opening `docs/index.html`; the site makes no API requests and uses no third-party scripts or fonts.
 
-## Quick start
+## Quick start with Docker Compose
 
-Use a Linux x86-64 host with Docker Compose v2.20+. Allow space for the complete game, maps, replays, and backups; start with at least 100 GB available.
+Docker and Compose v2.20+ on a Linux x86-64 host are the only host runtime requirements. CS2, SteamCMD, and the plugin runtime run inside containers. Allow space for the complete game, maps, replays, and backups; start with at least 100 GB available.
 
 Generate and extract your deployment using the browser generator, then follow its START-HERE.md. In the extracted deployment directory:
 
@@ -216,6 +210,12 @@ docker compose start
 ```
 
 Restore into empty game/state volumes for an exact rollback; extracting over a newer installation can leave newer files behind. Set the frozen policy before first start to prevent an immediate upgrade. On a new host, generate a deployment, build its image, restore data with the one-off command above, and use `up` to create/start its services. Match the original volume/project names intentionally. Do not delete a working volume to prepare a restore without an independently verified backup.
+
+## Optional Pterodactyl integration
+
+Pterodactyl is an opt-in integration for users who already manage servers through a panel. The standalone setup above provides server installation, updates, pinning, configuration, console access, backups, and optional SFTP without a panel, Wings, or an egg.
+
+A normal `docker build .` builds the standalone image, and the example and generated Compose files explicitly select `standalone`. Panel users can choose `docker build --target pterodactyl` from the same Dockerfile. See the separate [Pterodactyl guide](pterodactyl/README.md) for the optional yolk and egg setup.
 
 ## Troubleshooting and upstream references
 

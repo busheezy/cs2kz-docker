@@ -1,4 +1,6 @@
-# Pterodactyl / Wings
+# Optional Pterodactyl / Wings integration
+
+The primary setup is [standalone Docker Compose](../README.md#quick-start-with-docker-compose). Use this guide only when deploying to an existing Pterodactyl panel; Docker users can run and manage the complete server directly.
 
 The game server uses **one Dockerfile** with a shared `runtime` stage and two final targets:
 
