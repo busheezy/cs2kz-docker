@@ -1,0 +1,21 @@
+{
+  "game": {
+    "update": true,
+    "branch": "public",
+    "expected_build": "",
+    "validate": false,
+    "port": 27015,
+    "map": "de_dust2",
+    "workshop_map": "",
+    "maxplayers": 16,
+    "extra_args": []
+  },
+  "maintenance": { "interval_hours": 24, "warning_seconds": 60 },
+  "components": {
+    "metamod": { "version": "latest", "sha256": "" },
+    "cs2kz": { "version": "latest", "sha256": "" },
+    "sql_mm": { "version": "latest", "sha256": "" },
+    "multiaddonmanager": { "version": "latest", "sha256": "" },
+    "cs2menus": { "version": "latest", "sha256": "" }
+  }
+}

@@ -1,0 +1,11 @@
+*
+!Dockerfile
+!runtime/
+!runtime/**
+**/__pycache__/
+**/*.pyc
+!config/
+!config/settings.json
+!examples/
+!examples/config/
+!examples/config/server.cfg

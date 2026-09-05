@@ -1,0 +1,3 @@
+deployments/
+__pycache__/
+*.pyc

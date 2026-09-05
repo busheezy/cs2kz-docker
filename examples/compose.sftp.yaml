@@ -1,0 +1,95 @@
+name: "cs2kz"
+services:
+  server:
+    build:
+      target: standalone
+      context: ".."
+      args:
+        BASE_IMAGE: "registry.gitlab.steamos.cloud/steamrt/sniper/platform:latest"
+    image: "cs2kz:local"
+    platform: "linux/amd64"
+    restart: "unless-stopped"
+    user: "10000:10000"
+    read_only: true
+    cap_drop:
+      - "ALL"
+    security_opt:
+      - "no-new-privileges:true"
+    pids_limit: 512
+    stop_grace_period: "90s"
+    shm_size: "1gb"
+    ports:
+      - "27015:27015/udp"
+    volumes:
+      - "game:/server"
+      - "state:/state"
+      - "steamcmd:/opt/steamcmd"
+      - "home:/home/cs2kz"
+      - type: "bind"
+        source: "./config"
+        target: "/config"
+        read_only: true
+        bind:
+          create_host_path: false
+    tmpfs:
+      - "/tmp:rw,nosuid,nodev,size=1g"
+      - "/run/cs2kz:rw,nosuid,nodev,noexec,uid=10000,gid=10000,mode=0700"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    logging:
+      driver: "local"
+      options:
+        max-size: "20m"
+        max-file: "5"
+  sftp:
+    build:
+      context: "../sftp"
+      args:
+        SFTP_BASE_IMAGE: "debian:bookworm-slim"
+    image: "cs2kz-sftp:local"
+    restart: "unless-stopped"
+    read_only: true
+    depends_on:
+      server:
+        condition: "service_started"
+    cap_drop:
+      - "ALL"
+    cap_add:
+      - "SYS_CHROOT"
+      - "SETUID"
+      - "SETGID"
+      - "KILL"
+    security_opt:
+      - "no-new-privileges:true"
+    pids_limit: 64
+    ports:
+      - "127.0.0.1:2222:2222"
+    volumes:
+      - "game:/srv/jail/files"
+      - "hostkeys:/hostkeys"
+    secrets:
+      - "authorized_keys"
+    tmpfs:
+      - "/run:rw,nosuid,nodev,noexec"
+      - "/tmp:rw,nosuid,nodev,noexec"
+    networks:
+      - "sftp"
+    logging:
+      driver: "local"
+      options:
+        max-size: "20m"
+        max-file: "5"
+volumes:
+  game: {}
+  state: {}
+  steamcmd: {}
+  home: {}
+  hostkeys: {}
+secrets:
+  authorized_keys:
+    file: "./authorized_keys"
+networks:
+  sftp:
+    internal: true

@@ -1,0 +1,241 @@
+{
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2026-09-05T00:00:00+00:00",
+  "name": "CS2KZ \u00b7 Steam Runtime 3",
+  "author": "replace-me@example.com",
+  "description": "CS2KZ on Sniper with optional companion plugins, pinning and persistent configuration. Generate this egg with manage.py egg before importing. Uses the pterodactyl target of the shared Dockerfile.",
+  "features": ["steam_disk_space"],
+  "docker_images": {
+    "CS2KZ Sniper": "ghcr.io/your-owner/cs2kz:pterodactyl"
+  },
+  "file_denylist": [],
+  "startup": "python3 /opt/cs2kz/server.py",
+  "config": {
+    "files": "{}",
+    "startup": "{\"done\": \"Connection to Steam servers successful\"}",
+    "logs": "{}",
+    "stop": "quit"
+  },
+  "scripts": {
+    "installation": {
+      "script": "set -eu\nexport HOME=/mnt/server\nexport SERVER_DIR=/mnt/server\nexport STATE_DIR=/mnt/server/.cs2kz/state\nexport CONFIG_DIR=/mnt/server/.cs2kz/config\nexport STEAMCMD_DIR=/mnt/server/.cs2kz/steamcmd\nexport PTERODACTYL=1\npython3 /opt/cs2kz/pterodactyl.py --install\n",
+      "container": "ghcr.io/your-owner/cs2kz:pterodactyl",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Steam login token",
+      "description": "App 730 GSLT. Blank preserves server-private.cfg.",
+      "env_variable": "GSLT",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|alpha_dash",
+      "field_type": "text"
+    },
+    {
+      "name": "RCON password",
+      "description": "Blank preserves the generated password. Only letters, digits, hyphens and underscores.",
+      "env_variable": "RCON_PASSWORD",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|alpha_dash|min:16",
+      "field_type": "text"
+    },
+    {
+      "name": "Update CS2",
+      "description": "1 updates on startup; 0 freezes an existing installation. Blank uses settings.json.",
+      "env_variable": "CS2_UPDATE",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|in:0,1",
+      "field_type": "text"
+    },
+    {
+      "name": "Validate CS2",
+      "description": "1 validates game files when updating. Blank uses settings.json.",
+      "env_variable": "CS2_VALIDATE",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|in:0,1",
+      "field_type": "text"
+    },
+    {
+      "name": "Steam branch",
+      "description": "Blank uses settings.json; default is public.",
+      "env_variable": "CS2_BRANCH",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:64",
+      "field_type": "text"
+    },
+    {
+      "name": "Required Steam build",
+      "description": "An installed build to require. Set CS2_UPDATE to 0 and restore matching files first.",
+      "env_variable": "CS2_EXPECTED_BUILD",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|numeric",
+      "field_type": "text"
+    },
+    {
+      "name": "Initial map",
+      "description": "Built-in map. Blank uses settings.json.",
+      "env_variable": "CS2_MAP",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:128",
+      "field_type": "text"
+    },
+    {
+      "name": "Workshop map",
+      "description": "Workshop map ID; overrides the built-in map. Blank uses settings.json.",
+      "env_variable": "CS2_WORKSHOP_MAP",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|numeric",
+      "field_type": "text"
+    },
+    {
+      "name": "Player slots",
+      "description": "Blank uses settings.json; default is 16.",
+      "env_variable": "CS2_MAXPLAYERS",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|integer|min:1|max:64",
+      "field_type": "text"
+    },
+    {
+      "name": "Maintenance interval",
+      "description": "Hours between maintenance restarts. New panel installations default to 0; use panel schedules or opt in here.",
+      "env_variable": "MAINTENANCE_HOURS",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|integer|min:0|max:8760",
+      "field_type": "text"
+    },
+    {
+      "name": "Maintenance warning",
+      "description": "Seconds of in-game warning before maintenance. Blank uses settings.json.",
+      "env_variable": "MAINTENANCE_WARNING",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|integer|min:0|max:3600",
+      "field_type": "text"
+    },
+    {
+      "name": "metamod version",
+      "description": "latest or a fixed release version. Blank uses settings.json.",
+      "env_variable": "METAMOD_VERSION",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:128",
+      "field_type": "text"
+    },
+    {
+      "name": "metamod checksum",
+      "description": "Optional pinned archive SHA256. Blank uses settings.json. Requires a fixed component version.",
+      "env_variable": "METAMOD_SHA256",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|size:64|regex:/^[a-fA-F0-9]+$/",
+      "field_type": "text"
+    },
+    {
+      "name": "cs2kz version",
+      "description": "latest or a fixed release version. Blank uses settings.json.",
+      "env_variable": "CS2KZ_VERSION",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:128",
+      "field_type": "text"
+    },
+    {
+      "name": "cs2kz checksum",
+      "description": "Optional pinned archive SHA256. Blank uses settings.json. Requires a fixed component version.",
+      "env_variable": "CS2KZ_SHA256",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|size:64|regex:/^[a-fA-F0-9]+$/",
+      "field_type": "text"
+    },
+    {
+      "name": "sql_mm version",
+      "description": "latest, off or a fixed release version. Blank uses settings.json.",
+      "env_variable": "SQL_MM_VERSION",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:128",
+      "field_type": "text"
+    },
+    {
+      "name": "sql_mm checksum",
+      "description": "Optional pinned archive SHA256. Blank uses settings.json. Requires a fixed component version.",
+      "env_variable": "SQL_MM_SHA256",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|size:64|regex:/^[a-fA-F0-9]+$/",
+      "field_type": "text"
+    },
+    {
+      "name": "multiaddonmanager version",
+      "description": "latest, off or a fixed release version. Blank uses settings.json.",
+      "env_variable": "MULTIADDONMANAGER_VERSION",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:128",
+      "field_type": "text"
+    },
+    {
+      "name": "multiaddonmanager checksum",
+      "description": "Optional pinned archive SHA256. Blank uses settings.json. Requires a fixed component version.",
+      "env_variable": "MULTIADDONMANAGER_SHA256",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|size:64|regex:/^[a-fA-F0-9]+$/",
+      "field_type": "text"
+    },
+    {
+      "name": "cs2menus version",
+      "description": "latest, off or a fixed release version. Blank uses settings.json.",
+      "env_variable": "CS2MENUS_VERSION",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:128",
+      "field_type": "text"
+    },
+    {
+      "name": "cs2menus checksum",
+      "description": "Optional pinned archive SHA256. Blank uses settings.json. Requires a fixed component version.",
+      "env_variable": "CS2MENUS_SHA256",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|size:64|regex:/^[a-fA-F0-9]+$/",
+      "field_type": "text"
+    }
+  ]
+}

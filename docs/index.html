@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Configure and download a CS2KZ Docker Compose deployment. Choose plugins, updates, and secure file access, entirely in your browser."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>CS2KZ · Server configurator</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="generator.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#configurator">Skip to configuration</a>
+    <header class="site-header">
+      <a class="brand" href="./"
+        ><span class="brand-mark" aria-hidden="true">KZ</span> CS2KZ
+        <span class="brand-divider">/</span><span class="brand-subtitle">Server tools</span></a
+      >
+      <span class="privacy"
+        ><span class="status-dot" aria-hidden="true"></span> Runs in your browser</span
+      >
+    </header>
+    <main>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">DOCKER COMPOSE GENERATOR</p>
+          <h1>Set up your next KZ server.</h1>
+          <p>Choose your setup. Download the files. Start with Docker.</p>
+        </div>
+        <span class="runtime-badge">STEAM RUNTIME 3 <strong>SNIPER</strong></span>
+      </div>
+      <noscript
+        ><p class="notice">
+          Enable JavaScript to generate your deployment. No information is sent to a server.
+        </p></noscript
+      >
+      <div class="workspace" id="configurator">
+        <form id="setup" autocomplete="off">
+          <section class="panel" aria-labelledby="server-heading">
+            <div class="section-heading">
+              <span class="step">01</span>
+              <div>
+                <h2 id="server-heading">Your server</h2>
+                <p>The basics for a new deployment.</p>
+              </div>
+            </div>
+            <div class="fields">
+              <label
+                >Project name<input
+                  name="name"
+                  value="cs2kz"
+                  required
+                  pattern="[a-z0-9][a-z0-9_\-]*"
+                  maxlength="63"
+                  spellcheck="false"
+                /><small>Lowercase letters, numbers, hyphens, or underscores.</small></label
+              >
+              <label
+                >Server name<input name="hostname" value="My CS2KZ Server" required maxlength="128"
+              /></label>
+              <label
+                >Game port<input
+                  name="port"
+                  type="number"
+                  value="27015"
+                  min="1024"
+                  max="65535"
+                  required
+                /><small>Allow this UDP port through your firewall.</small></label
+              >
+              <label
+                >Player slots<input
+                  name="maxplayers"
+                  type="number"
+                  value="16"
+                  min="1"
+                  max="64"
+                  required
+              /></label>
+              <label
+                >Starting map<input name="map" value="de_dust2" required spellcheck="false"
+              /></label>
+              <label
+                >Workshop map ID <span class="optional">optional</span
+                ><input
+                  name="workshop_map"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="e.g. 3070244462"
+                  spellcheck="false"
+                /><small>Overrides the starting map when supplied.</small></label
+              >
+              <label class="wide"
+                >Image source<select name="source">
+                  <option value="build">Build from this repository</option>
+                  <option value="image">Use a published image</option></select
+                ><small id="source-help"
+                  >Extract your download into this repository’s deployments folder.</small
+                ></label
+              >
+              <label id="image-field" class="wide" hidden
+                >Standalone image<input
+                  name="image"
+                  placeholder="ghcr.io/your-owner/cs2kz:standalone"
+                  spellcheck="false"
+                /><small
+                  >Use this project’s standalone image, not the Pterodactyl target.</small
+                ></label
+              >
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="plugins-heading">
+            <div class="section-heading">
+              <span class="step">02</span>
+              <div>
+                <h2 id="plugins-heading">Plugins &amp; dependencies</h2>
+                <p>Choose what to install. Pin versions when you need consistency.</p>
+              </div>
+            </div>
+            <div id="components"></div>
+            <p class="section-note">
+              “Latest” follows published releases. Check upstream compatibility before updating a
+              production server.
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="updates-heading">
+            <div class="section-heading">
+              <span class="step">03</span>
+              <div>
+                <h2 id="updates-heading">Updates &amp; maintenance</h2>
+                <p>Keep current, or preserve a working installation.</p>
+              </div>
+            </div>
+            <label class="toggle-row"
+              ><span
+                ><strong>Update CS2 on startup</strong
+                ><small>Also applies during scheduled maintenance.</small></span
+              ><input name="update" type="checkbox" checked
+            /></label>
+            <div class="fields">
+              <label
+                >Maintenance interval<select name="interval_hours">
+                  <option value="24">Every 24 hours</option>
+                  <option value="12">Every 12 hours</option>
+                  <option value="48">Every 48 hours</option>
+                  <option value="168">Every week</option>
+                  <option value="0">Manual updates only</option>
+                </select></label
+              >
+              <label
+                >Warning before restart<input
+                  name="warning_seconds"
+                  type="number"
+                  value="60"
+                  min="0"
+                  max="3600"
+                  required
+                /><small>Seconds of warning for connected players.</small></label
+              >
+              <label
+                >Steam branch<input name="branch" value="public" required spellcheck="false"
+              /></label>
+              <label
+                >Required installed build <span class="optional">optional</span
+                ><input
+                  name="expected_build"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  spellcheck="false"
+                  placeholder="Build ID"
+                  disabled
+                /><small>Turn off game updates to require an existing build.</small></label
+              >
+            </div>
+            <p class="section-note">
+              Scheduled maintenance restarts the game even when there are no new releases. A pinned
+              game build requires restoring matching files first.
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="access-heading">
+            <div class="section-heading">
+              <span class="step">04</span>
+              <div>
+                <h2 id="access-heading">Credentials &amp; file access</h2>
+                <p>Credentials are included only in your downloaded files.</p>
+              </div>
+            </div>
+            <div class="fields">
+              <label class="wide"
+                >Steam login token <span class="optional">optional for now</span
+                ><input
+                  name="gslt"
+                  type="password"
+                  pattern="[A-Za-z0-9]*"
+                  autocomplete="new-password"
+                  spellcheck="false"
+                /><small
+                  >Add your app 730 token here, or edit server-private.cfg before launch.</small
+                ></label
+              >
+              <label class="wide"
+                >RCON password
+                <div class="input-action">
+                  <input
+                    name="rcon"
+                    type="password"
+                    required
+                    minlength="16"
+                    maxlength="128"
+                    pattern="[A-Za-z0-9_\-]+"
+                    autocomplete="new-password"
+                    spellcheck="false"
+                  /><button id="regenerate" type="button" class="secondary">Regenerate</button>
+                </div>
+                <small
+                  >A strong password is generated for you. The RCON port stays closed.</small
+                ></label
+              >
+            </div>
+            <label class="toggle-row"
+              ><span
+                ><strong>Enable SFTP</strong
+                ><small>Key-only access to this server’s game files.</small></span
+              ><input name="sftp" type="checkbox"
+            /></label>
+            <div id="sftp-fields" class="fields" hidden>
+              <label
+                >SFTP port<input
+                  name="sftp_port"
+                  type="number"
+                  value="2222"
+                  min="1024"
+                  max="65535"
+                  required
+                /><small>Bound to localhost; use an SSH tunnel for remote access.</small></label
+              >
+              <label id="sftp-image-field" hidden
+                >SFTP image<input
+                  name="sftp_image"
+                  placeholder="ghcr.io/your-owner/cs2kz-sftp:latest"
+                  spellcheck="false"
+              /></label>
+              <label class="wide"
+                >SSH public keys<textarea
+                  name="keys"
+                  rows="4"
+                  placeholder="ssh-ed25519 AAAA… your-key"
+                  spellcheck="false"
+                ></textarea
+                ><small>One OpenSSH public key per line. Never paste a private key.</small></label
+              >
+              <p class="section-note wide">
+                SFTP users can edit game binaries and read game credentials. Grant access only to
+                trusted server administrators.
+              </p>
+            </div>
+          </section>
+          <details class="panel advanced">
+            <summary>Advanced configuration</summary>
+            <div class="fields">
+              <label class="wide" id="base-field"
+                >Sniper base image<input
+                  name="base_image"
+                  value="registry.gitlab.steamos.cloud/steamrt/sniper/platform:latest"
+                  spellcheck="false"
+                /><small>A digest can pin the base image used for local builds.</small></label
+              >
+              <label class="wide" id="sftp-base-field"
+                >SFTP base image<input
+                  name="sftp_base"
+                  value="debian:bookworm-slim"
+                  spellcheck="false"
+              /></label>
+              <label class="toggle-row wide"
+                ><span
+                  ><strong>Validate game files on update</strong
+                  ><small>Checks the CS2 installation through SteamCMD.</small></span
+                ><input name="validate" type="checkbox"
+              /></label>
+              <label class="wide"
+                >Extra launch arguments<textarea
+                  name="extra_args"
+                  rows="3"
+                  spellcheck="false"
+                  placeholder='["+host_workshop_collection", "123456789"]'
+                ></textarea
+                ><small
+                  >A JSON array, with one string per argument. Leave blank for none.</small
+                ></label
+              >
+              <label class="wide"
+                >CS2KZ configuration override <span class="optional">optional</span
+                ><textarea
+                  name="kz_config"
+                  rows="5"
+                  spellcheck="false"
+                  placeholder="Paste your complete cs2kz-server-config.txt here"
+                ></textarea
+                ><small
+                  >Leave blank to use the config supplied with your chosen release.</small
+                ></label
+              >
+            </div>
+          </details>
+        </form>
+        <aside class="output" aria-labelledby="output-heading">
+          <div class="output-top">
+            <p class="eyebrow">YOUR DEPLOYMENT</p>
+            <h2 id="output-heading">Ready when you are.</h2>
+            <p id="summary">Preparing your configuration…</p>
+          </div>
+          <div id="error" class="error" role="status" hidden></div>
+          <div class="preview-toolbar">
+            <label class="sr-only" for="file">Preview file</label
+            ><select id="file"></select
+            ><button id="copy" class="text-button" type="button">Copy</button>
+          </div>
+          <div id="secret-notice" class="secret-notice" hidden>
+            <p>This file contains credentials.</p>
+            <button id="reveal" type="button" class="secondary">Show contents</button>
+          </div>
+          <pre
+            id="preview"
+            tabindex="0"
+            aria-label="Generated file preview"
+          ><code id="code"></code></pre>
+          <div class="output-bottom">
+            <button id="download" type="button" class="primary" disabled>
+              Download deployment ZIP <span aria-hidden="true">↓</span>
+            </button>
+            <p>No Python. No account. Nothing uploaded.</p>
+            <p id="feedback" role="status" aria-live="polite"></p>
+          </div>
+          <div class="next-steps">
+            <h3>Then, on your Docker host</h3>
+            <ol id="instructions">
+              <li>Download and extract your deployment.</li>
+              <li>Follow the included START-HERE.md.</li>
+              <li>Run <code>docker compose up -d --build</code>.</li>
+            </ol>
+          </div>
+        </aside>
+      </div>
+      <footer>
+        CS2KZ server tools
+        <span>Generated files stay on your device. Nothing is saved between visits.</span>
+      </footer>
+    </main>
+  </body>
+</html>
